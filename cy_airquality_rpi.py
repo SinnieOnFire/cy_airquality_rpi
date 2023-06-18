@@ -46,7 +46,7 @@ for div in divs:
         # Print or process the extracted data as needed
         print(f"Pollutant: {pollutant}, Value: {value}")
 
-
+# Normalize unicode text since LCD can't render unicode symbols
 unicode_text = (f"Pollutant {pollutant}\nValue {value}")
 normalized_text = unidecode(unicode_text)
 
