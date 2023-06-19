@@ -61,5 +61,6 @@ while True:
     
     # Render on screen
     lcd.message(normalized_text)
+    
     # Update every 10 minutes
     time.sleep(600)
