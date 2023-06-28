@@ -54,7 +54,7 @@ while True:
                 pollutant_value = value.text.strip()
                 if pollutant_value == "Not Measured":
                         pollutant_value = "N/A"
-                print(f"Pollutant {pollutant_label}, value {pollutant_value}")
+                print(f"Pollutant {pollutant_label}, value: {pollutant_value}")
         else:
             print("Could not find table for Limassol, webpage updated or unavailable")
     else:
