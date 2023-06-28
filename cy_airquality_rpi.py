@@ -50,13 +50,13 @@ while True:
             # Extract and print the pollutant labels and values
             print(f"Station: {station_name}")
             for label, value in zip(pollutant_labels, pollutant_values):
-                pollutant_label = label.text.strip()
+                pollutant_label = label.text.strip().rstrip(":")
                 pollutant_value = value.text.strip()
                 if pollutant_value == "Not Measured":
                         pollutant_value = "N/A"
-                print(f"Pollutant {pollutant_label}, value: {pollutant_value}")
+                print(f"Pollutant {pollutant_label}, value {pollutant_value}")
         else:
-            print("Could not find the table's header, webpage updated or unavailable")
+            print("Could not find table for Limassol, webpage updated or unavailable")
     else:
         print("Could not find the table, webpage updated or unavailable")
 
