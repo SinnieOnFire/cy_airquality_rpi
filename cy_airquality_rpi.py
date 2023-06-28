@@ -3,6 +3,15 @@ from bs4 import BeautifulSoup
 import time
 import Adafruit_CharLCD as LCD
 from unidecode import unidecode
+import logging
+
+# Configure logging
+logging.basicConfig(
+    filename='console.log',
+    level=logging.INFO,
+    format='%(asctime)s [%(levelname)s] %(message)s',
+    datefmt='%Y-%m-%d %H:%M:%S'
+)
 
 # Raspberry Pi GPIO pin and LCD use configuration
 lcd_rs = 25
@@ -65,15 +74,9 @@ while True:
                     # Display the line on the LCD screen
                     lcd.message(normalized_text)
 
-                    # Set the display duration for the first pollutant
-                    if index == 0:
-                        display_duration = 15
-                    else:
-                        display_duration = 7
-
                     # Print all 8 lines of pollutant data in the console
                     for line in pollutant_lines:
-                        print(line)
+                        logging.info(line)
 
                     # Pause for the specified duration
                     time.sleep(display_duration)
@@ -82,14 +85,14 @@ while True:
                     index = (index + 1) % len(pollutant_lines)
 
             else:
-                print("Could not find table for Limassol, webpage updated or unavailable")
+                logging.error("Could not find table for Limassol, webpage updated or unavailable")
         else:
-            print("Could not find the table, webpage updated or unavailable")
+            logging.error("Could not find the table, webpage updated or unavailable")
 
     else:
         lcd.clear()
         lcd.message("Error fetching data")
-        print("Error fetching data")
+        logging.error("Error fetching data")
 
     # Update every 10 minutes
     time.sleep(600)
