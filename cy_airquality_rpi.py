@@ -4,6 +4,7 @@ import time
 import Adafruit_CharLCD as LCD
 from unidecode import unidecode
 import logging
+from datetime import datetime
 
 # Configure logging
 logging.basicConfig(
@@ -60,6 +61,11 @@ while True:
                     line = f"Pollutant: {pollutant_label}\nValue: {pollutant_value}"
                     pollutant_lines.append(line)
 
+                # Add the timestamp
+                now = datetime.now()
+                time_line = f"Updated:\n{now.strftime('%d.%m.%Y %H:%M:%S')}"
+                pollutant_lines.insert(8, time_line)
+
                 index = 0
                 while True:
                     # Get the current line to display
@@ -74,10 +80,14 @@ while True:
                     # Display the line on the LCD screen
                     lcd.message(normalized_text)
 
-                    # Print all 8 lines of pollutant data in the console
+                    # Print all lines of pollutant data in the console
                     for line in pollutant_lines:
                         print(line)
-                        logging.info(line)
+
+                    # Log all lines of pollutant data in the console without timestamp
+                    for i, line in enumerate(pollutant_lines):
+                        if i != 8:  # Skip logging for the 9th line
+                            logging.info(line)
 
                     # Set the display duration for the first pollutant
                     if index == 0:
