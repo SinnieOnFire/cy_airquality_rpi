@@ -52,6 +52,8 @@ while True:
             for label, value in zip(pollutant_labels, pollutant_values):
                 pollutant_label = label.text.strip()
                 pollutant_value = value.text.strip()
+                if pollutant_value == "Not Measured":
+                        pollutant_value = "N/A"
                 print(f"Pollutant {pollutant_label}, value: {pollutant_value}")
         else:
             print("Could not find the table's header, webpage updated or unavailable")
