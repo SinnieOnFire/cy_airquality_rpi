@@ -26,9 +26,6 @@ while True:
         # Parse the HTML content using BeautifulSoup
         soup = BeautifulSoup(response.content, "html.parser")
 
-        # Parse the HTML content using BeautifulSoup
-        soup = BeautifulSoup(response.content, "html.parser")
-
         # Find the div element with the specified class that shows pollution data
         div_element = soup.find("div", class_="col col-xs-12 col-sm-6 col-md-3 col-lg-2 col-3")
 
@@ -47,39 +44,37 @@ while True:
                 # Create a list of formatted pollutant lines
                 pollutant_lines = []
                 for label, value in zip(pollutant_labels, pollutant_values):
-                    pollutant_label = label.text.strip().rstrip(":") # Remove trail colon
+                    pollutant_label = label.text.strip().rstrip(":")  # Remove trailing colon
                     pollutant_value = value.text.strip()
-                    if pollutant_value == "Not Measured": # Short text for N/A
+                    if pollutant_value == "Not Measured":  # Short text for N/A
                         pollutant_value = "N/A"
-                    line = f"Pollutant {pollutant_label}, Value {pollutant_value}"
+                    line = f"Pollutant: {pollutant_label}\nValue: {pollutant_value}"
                     pollutant_lines.append(line)
 
-                    # Scroll through the pollutant lines on the LCD display
-                    for line in pollutant_lines:
-                        print(line)
+                # Print all 8 lines of pollutant data in the console
+                for line in pollutant_lines:
+                    print(line)
 
-                    # Scroll the line on the LCD display
-                    index = 0
-                    while True:
-                        # Get the current line to display
-                        line = pollutant_lines[index]
-                        
-                        # Clear the LCD screen
-                        lcd.clear()
+                index = 0
+                while True:
+                    # Get the current line to display
+                    line = pollutant_lines[index]
 
-                        # Normalize unicode text since LCD can't render unicode symbols
-                        normalized_text = unidecode(line)
+                    # Clear the LCD screen
+                    lcd.clear()
 
-                        # Scroll the line on the LCD display
-                        for i in range(len(normalized_text) - lcd_columns + 1):
-                            lcd.message(normalized_text[i:i+lcd_columns])
-                            time.sleep(0.5)  # Adjust the scrolling speed here
+                    # Normalize unicode text since LCD can't render unicode symbols
+                    normalized_text = unidecode(line)
 
-                        # Pause at the end of each line
-                        time.sleep(10)  # Adjust the pause duration here
+                    # Display the line on the LCD screen
+                    lcd.message(normalized_text)
 
-                        # Increment the index and loop back to the beginning
-                        index = (index + 1) % len(pollutant_lines)
+                    # Pause for 10 seconds
+                    time.sleep(10)
+
+                    # Increment the index and loop back to the beginning
+                    index = (index + 1) % len(pollutant_lines)
+
             else:
                 print("Could not find table for Limassol, webpage updated or unavailable")
         else:
@@ -90,5 +85,5 @@ while True:
         lcd.message("Error fetching data")
         print("Error fetching data")
 
-        # Update every 10 minutes
-        time.sleep(600)
+    # Update every 10 minutes
+    time.sleep(600)
