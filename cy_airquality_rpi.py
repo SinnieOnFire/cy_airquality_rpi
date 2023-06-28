@@ -71,6 +71,10 @@ while True:
                     else:
                         display_duration = 7
 
+                    # Print all 8 lines of pollutant data in the console
+                    for line in pollutant_lines:
+                        print(line)
+
                     # Pause for the specified duration
                     time.sleep(display_duration)
 
@@ -81,10 +85,6 @@ while True:
                 print("Could not find table for Limassol, webpage updated or unavailable")
         else:
             print("Could not find the table, webpage updated or unavailable")
-
-        # Print all 8 lines of pollutant data in the console
-        for line in pollutant_lines:
-            print(line)
 
     else:
         lcd.clear()
