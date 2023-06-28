@@ -69,8 +69,14 @@ while True:
                     # Display the line on the LCD screen
                     lcd.message(normalized_text)
 
-                    # Pause for 10 seconds
-                    time.sleep(10)
+                    # Set the display duration for the first pollutant
+                    if index == 0:
+                        display_duration = 15
+                    else:
+                        display_duration = 7
+
+                    # Pause for the specified duration
+                    time.sleep(display_duration)
 
                     # Increment the index and loop back to the beginning
                     index = (index + 1) % len(pollutant_lines)
