@@ -76,7 +76,14 @@ while True:
 
                     # Print all 8 lines of pollutant data in the console
                     for line in pollutant_lines:
+                        print(line)
                         logging.info(line)
+
+                    # Set the display duration for the first pollutant
+                    if index == 0:
+                        display_duration = 15
+                    else:
+                        display_duration = 7
 
                     # Pause for the specified duration
                     time.sleep(display_duration)
@@ -85,8 +92,10 @@ while True:
                     index = (index + 1) % len(pollutant_lines)
 
             else:
+                print("Could not find table for Limassol, webpage updated or unavailable")
                 logging.error("Could not find table for Limassol, webpage updated or unavailable")
         else:
+            print("Could not find the table, webpage updated or unavailable")
             logging.error("Could not find the table, webpage updated or unavailable")
 
     else:
