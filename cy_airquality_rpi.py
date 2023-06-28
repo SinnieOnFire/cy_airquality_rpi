@@ -51,10 +51,6 @@ while True:
                     line = f"Pollutant: {pollutant_label}\nValue: {pollutant_value}"
                     pollutant_lines.append(line)
 
-                # Print all 8 lines of pollutant data in the console
-                for line in pollutant_lines:
-                    print(line)
-
                 index = 0
                 while True:
                     # Get the current line to display
@@ -90,6 +86,10 @@ while True:
         lcd.clear()
         lcd.message("Error fetching data")
         print("Error fetching data")
+
+    # Print all 8 lines of pollutant data in the console
+    for line in pollutant_lines:
+        print(line)
 
     # Update every 10 minutes
     time.sleep(600)
