@@ -4,7 +4,7 @@ import time
 import Adafruit_CharLCD as LCD
 from unidecode import unidecode
 
-# Raspberry Pi pin and LCD configuration
+# Raspberry Pi GPIO pin and LCD use configuration
 lcd_rs        = 25
 lcd_en        = 24
 lcd_d4        = 23
@@ -22,7 +22,7 @@ lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7,
                            lcd_columns, lcd_rows, lcd_backlight)
 
 while True:
-    # Update screen
+    # Refresh screen
     lcd.clear()
 
     # Send a GET request to the webpage
@@ -32,31 +32,34 @@ while True:
     # Parse the HTML content using BeautifulSoup
     soup = BeautifulSoup(response.content, "html.parser")
 
-    # Find the div containing the data where class is the div with info needed
-    divs = soup.find_all("div", class_="col col-xs-12 col-sm-6 col-md-3 col-lg-2 col-3")
+    # Find the div element with the specified class that shows pollution data
+    div_element = soup.find("div", class_="col col-xs-12 col-sm-6 col-md-3 col-lg-2 col-3")
 
-    # Loop through the divs and extract the data for Limassol only
-    for div in divs:
-        # Extract the location, pollutant, and value data
-        location_element = div.find("h4")
-        pollutant_label = div.find("span", class_="pollutant-label")
-        pollutant_value = div.find("span", class_="pollutant-value")
+    if div_element:
+        # Find the h4 header within the div to filter out results for Limassol
+        h4_header = div_element.find("h4", class_="field-content stations-overview-title")
+
+        if h4_header:
+            # Get the station name
+            station_name = h4_header.text.strip()
+
+            # Find all pollutant labels and values within the div
+            pollutant_labels = div_element.find_all(class_="pollutant-label")
+            pollutant_values = div_element.find_all(class_="pollutant-value")
         
-        # Check if elements are found
-        if location_element and pollutant_label and pollutant_value and "Limassol" in location_element.text:
-            location = location_element.text.strip()
-            pollutant = pollutant_label.text.strip()
-            value = pollutant_value.text.strip()
-            # Print result
-            print(f"Pollutant: {pollutant}, Value: {value}")
-            
-#        else:
-#           print("PARSE\nERROR")
-#           lcd.message("PARSE\nERROR")
-# Todo: error handling
+            # Extract and print the pollutant labels and values
+            print(f"Station: {station_name}")
+            for label, value in zip(pollutant_labels, pollutant_values):
+                pollutant_label = label.text.strip()
+                pollutant_value = value.text.strip()
+                print(f"Pollutant {pollutant_label}, value: {pollutant_value}")
+        else:
+            print("Could not find the table's header, webpage updated or unavailable")
+    else:
+        print("Could not find the table, webpage updated or unavailable")
 
     # Normalize unicode text since LCD can't render unicode symbols
-    unicode_text = (f"Pollutant {pollutant}\nValue {value}")
+    unicode_text = (f"Pollutant {pollutant_label}\nValue {pollutant_value}")
     normalized_text = unidecode(unicode_text)
     
     # Render on screen
