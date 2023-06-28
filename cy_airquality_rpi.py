@@ -27,10 +27,6 @@ lcd_rows = 2
 
 lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
 
-# Backlight brightness (0-100)
-brightness = 75  # Example brightness value
-lcd.set_backlight(brightness)
-
 while True:
     # Send a GET request to the webpage
     url = "https://www.airquality.dli.mlsi.gov.cy/"
