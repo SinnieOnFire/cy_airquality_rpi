@@ -82,14 +82,14 @@ while True:
         else:
             print("Could not find the table, webpage updated or unavailable")
 
+        # Print all 8 lines of pollutant data in the console
+        for line in pollutant_lines:
+            print(line)
+
     else:
         lcd.clear()
         lcd.message("Error fetching data")
         print("Error fetching data")
-
-    # Print all 8 lines of pollutant data in the console
-    for line in pollutant_lines:
-        print(line)
 
     # Update every 10 minutes
     time.sleep(600)
