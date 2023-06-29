@@ -51,26 +51,26 @@ while True:
                 pollutant_labels = div_element.find_all(class_="pollutant-label")
                 pollutant_values = div_element.find_all(class_="pollutant-value")
 
-                # Refresh time
-                now = datetime.now()
-                current_time = now.strftime('%d.%m.%Y %H:%M:%S')
-
-                # Create a list of formatted pollutant lines
-                pollutant_lines = []
-                for label, value in zip(pollutant_labels, pollutant_values):
-                    pollutant_label = label.text.strip().rstrip(":")  # Remove trailing colon
-                    pollutant_value = value.text.strip()
-                    if pollutant_value == "Not Measured":  # Short text for N/A
-                        pollutant_value = "N/A"
-                    line = f"Pollutant: {pollutant_label}\nValue: {pollutant_value}"
-                    pollutant_lines.append(line)
-
-                # Add the timestamp
-                time_line = f"Last Updated:\n{current_time}"
-                pollutant_lines.insert(8, time_line)
-
                 index = 0
                 while True:
+                    # Refresh time
+                    now = datetime.now()
+                    current_time = now.strftime('%d.%m.%Y %H:%M:%S')
+
+                    # Create a list of formatted pollutant lines
+                    pollutant_lines = []
+                    for label, value in zip(pollutant_labels, pollutant_values):
+                        pollutant_label = label.text.strip().rstrip(":")  # Remove trailing colon
+                        pollutant_value = value.text.strip()
+                        if pollutant_value == "Not Measured":  # Short text for N/A
+                            pollutant_value = "N/A"
+                        line = f"Pollutant: {pollutant_label}\nValue: {pollutant_value}"
+                        pollutant_lines.append(line)
+
+                    # Add the timestamp
+                    time_line = f"Last Updated:\n{current_time}"
+                    pollutant_lines.insert(8, time_line)
+
                     # Get the current line to display
                     line = pollutant_lines[index]
 
@@ -99,7 +99,7 @@ while True:
 
                     # Increment the index and loop back to the beginning
                     index = (index + 1) % len(pollutant_lines)
-                    
+
                     # Print all lines of pollutant data in the console
                     for line in pollutant_lines:
                         print(line)
