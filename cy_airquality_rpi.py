@@ -51,6 +51,10 @@ while True:
                 pollutant_labels = div_element.find_all(class_="pollutant-label")
                 pollutant_values = div_element.find_all(class_="pollutant-value")
 
+                # Refresh time
+                now = datetime.now()
+                current_time = now.strftime('%d.%m.%Y %H:%M:%S')
+
                 # Create a list of formatted pollutant lines
                 pollutant_lines = []
                 for label, value in zip(pollutant_labels, pollutant_values):
@@ -62,8 +66,7 @@ while True:
                     pollutant_lines.append(line)
 
                 # Add the timestamp
-                now = datetime.now()
-                time_line = f"Updated:\n{now.strftime('%d.%m.%Y %H:%M:%S')}"
+                time_line = f"Last Updated:\n{current_time}"
                 pollutant_lines.insert(8, time_line)
 
                 index = 0
@@ -80,10 +83,6 @@ while True:
                     # Display the line on the LCD screen
                     lcd.message(normalized_text)
 
-                    # Print all lines of pollutant data in the console
-                    for line in pollutant_lines:
-                        print(line)
-
                     # Log all lines of pollutant data in the console without timestamp
                     for i, line in enumerate(pollutant_lines):
                         if i != 8:  # Skip logging for the 9th line
@@ -93,14 +92,17 @@ while True:
                     if index == 0:
                         display_duration = 10
                     else:
-                        display_duration = 2
+                        display_duration = 3
 
                     # Pause for the specified duration
                     time.sleep(display_duration)
 
                     # Increment the index and loop back to the beginning
                     index = (index + 1) % len(pollutant_lines)
-
+                    
+                    # Print all lines of pollutant data in the console
+                    for line in pollutant_lines:
+                        print(line)
             else:
                 print("Could not find table for Limassol, webpage updated or unavailable")
                 logging.error("Could not find table for Limassol, webpage updated or unavailable")
@@ -114,4 +116,4 @@ while True:
         logging.error("Error fetching data")
 
     # Update every 10 minutes
-    time.sleep(600)
+    time.sleep(60)
