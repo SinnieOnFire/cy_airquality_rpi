@@ -91,9 +91,9 @@ while True:
 
                     # Set the display duration for the first pollutant
                     if index == 0:
-                        display_duration = 15
+                        display_duration = 10
                     else:
-                        display_duration = 7
+                        display_duration = 2
 
                     # Pause for the specified duration
                     time.sleep(display_duration)
