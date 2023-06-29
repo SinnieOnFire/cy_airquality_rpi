@@ -3,16 +3,24 @@ from bs4 import BeautifulSoup
 import time
 import Adafruit_CharLCD as LCD
 from unidecode import unidecode
-import logging
 from datetime import datetime
 
+import logging
+from logging.handlers import RotatingFileHandler
+
 # Configure logging
-logging.basicConfig(
-    filename='console.log',
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
+log_file = 'console.log'
+max_file_size = 100 * 1024 * 1024  # 100 MB
+backup_count = 5  # Number of backup log files to keep
+
+# Create a rotating file handler
+file_handler = RotatingFileHandler(log_file, maxBytes=max_file_size, backupCount=backup_count)
+file_handler.setLevel(logging.INFO)
+file_handler.setFormatter(logging.Formatter('%(asctime)s [%(levelname)s] %(message)s'))
+
+# Add the rotating file handler to the root logger
+logging.getLogger().addHandler(file_handler)
+logging.getLogger().setLevel(logging.INFO)
 
 # Raspberry Pi GPIO pin and LCD use configuration
 lcd_rs = 25
@@ -116,4 +124,4 @@ while True:
         logging.error("Error fetching data")
 
     # Update every 10 minutes
-    time.sleep(60)
+    time.sleep(600)
