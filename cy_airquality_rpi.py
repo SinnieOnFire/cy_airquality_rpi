@@ -3,16 +3,24 @@ from bs4 import BeautifulSoup
 import time
 import Adafruit_CharLCD as LCD
 from unidecode import unidecode
-import logging
 from datetime import datetime
 
+import logging
+from logging.handlers import RotatingFileHandler
+
 # Configure logging
-logging.basicConfig(
-    filename='console.log',
-    level=logging.INFO,
-    format='%(asctime)s [%(levelname)s] %(message)s',
-    datefmt='%Y-%m-%d %H:%M:%S'
-)
+log_file = 'console.log'
+max_file_size = 100 * 1024 * 1024  # 100 MB
+backup_count = 5  # Number of backup log files to keep
+
+# Create a rotating file handler
+file_handler = RotatingFileHandler(log_file, maxBytes=max_file_size, backupCount=backup_count)
+file_handler.setLevel(logging.INFO)
+file_handler.setFormatter(logging.Formatter('%(asctime)s [%(levelname)s] %(message)s'))
+
+# Add the rotating file handler to the root logger
+logging.getLogger().addHandler(file_handler)
+logging.getLogger().setLevel(logging.INFO)
 
 # Raspberry Pi GPIO pin and LCD use configuration
 lcd_rs = 25
@@ -51,23 +59,26 @@ while True:
                 pollutant_labels = div_element.find_all(class_="pollutant-label")
                 pollutant_values = div_element.find_all(class_="pollutant-value")
 
-                # Create a list of formatted pollutant lines
-                pollutant_lines = []
-                for label, value in zip(pollutant_labels, pollutant_values):
-                    pollutant_label = label.text.strip().rstrip(":")  # Remove trailing colon
-                    pollutant_value = value.text.strip()
-                    if pollutant_value == "Not Measured":  # Short text for N/A
-                        pollutant_value = "N/A"
-                    line = f"Pollutant: {pollutant_label}\nValue: {pollutant_value}"
-                    pollutant_lines.append(line)
-
-                # Add the timestamp
-                now = datetime.now()
-                time_line = f"Updated:\n{now.strftime('%d.%m.%Y %H:%M:%S')}"
-                pollutant_lines.insert(8, time_line)
-
                 index = 0
                 while True:
+                    # Refresh time
+                    now = datetime.now()
+                    current_time = now.strftime('%d.%m.%Y %H:%M:%S')
+
+                    # Create a list of formatted pollutant lines
+                    pollutant_lines = []
+                    for label, value in zip(pollutant_labels, pollutant_values):
+                        pollutant_label = label.text.strip().rstrip(":")  # Remove trailing colon
+                        pollutant_value = value.text.strip()
+                        if pollutant_value == "Not Measured":  # Short text for N/A
+                            pollutant_value = "N/A"
+                        line = f"Pollutant: {pollutant_label}\nValue: {pollutant_value}"
+                        pollutant_lines.append(line)
+
+                    # Add the timestamp
+                    time_line = f"Last Updated:\n{current_time}"
+                    pollutant_lines.insert(8, time_line)
+
                     # Get the current line to display
                     line = pollutant_lines[index]
 
@@ -80,10 +91,6 @@ while True:
                     # Display the line on the LCD screen
                     lcd.message(normalized_text)
 
-                    # Print all lines of pollutant data in the console
-                    for line in pollutant_lines:
-                        print(line)
-
                     # Log all lines of pollutant data in the console without timestamp
                     for i, line in enumerate(pollutant_lines):
                         if i != 8:  # Skip logging for the 9th line
@@ -93,7 +100,7 @@ while True:
                     if index == 0:
                         display_duration = 10
                     else:
-                        display_duration = 2
+                        display_duration = 3
 
                     # Pause for the specified duration
                     time.sleep(display_duration)
@@ -101,6 +108,9 @@ while True:
                     # Increment the index and loop back to the beginning
                     index = (index + 1) % len(pollutant_lines)
 
+                    # Print all lines of pollutant data in the console
+                    for line in pollutant_lines:
+                        print(line)
             else:
                 print("Could not find table for Limassol, webpage updated or unavailable")
                 logging.error("Could not find table for Limassol, webpage updated or unavailable")
