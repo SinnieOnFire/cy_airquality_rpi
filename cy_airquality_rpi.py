@@ -4,6 +4,7 @@ import time
 import Adafruit_CharLCD as LCD
 from unidecode import unidecode
 from datetime import datetime
+import re
 
 import logging
 from logging.handlers import RotatingFileHandler
@@ -55,15 +56,26 @@ while True:
                 # Get the station city
                 station_name = h4_header.text.strip()
 
-                # Find all pollutant labels and values within the div
+                # Find all pollutant labels and values within the div along with last update time
                 pollutant_labels = div_element.find_all(class_="pollutant-label")
                 pollutant_values = div_element.find_all(class_="pollutant-value")
+
+                # Find the element containing the text starting with "Updated on: "
+                regex_pattern = re.compile(r"^Updated on: (\d{2}/\d{2}/\d{4} \d{2}:\d{2})")
+                element = soup.find(text=regex_pattern)
+
+                if element:
+                # Extract the time from the text
+                    match = regex_pattern.match(element)
+                    if match:
+                        updated_time = match.group(1)
+
 
                 index = 0
                 while True:
                     # Refresh time
-                    now = datetime.now()
-                    current_time = now.strftime('%d.%m.%Y %H:%M:%S')
+                    # now = datetime.now()
+                    # current_time = now.strftime('%d.%m.%Y %H:%M:%S')
 
                     # Create a list of formatted pollutant lines
                     pollutant_lines = []
@@ -76,7 +88,7 @@ while True:
                         pollutant_lines.append(line)
 
                     # Add the timestamp
-                    time_line = f"Last Updated:\n{current_time}"
+                    time_line = f"Last Updated:\n{updated_time}"
                     pollutant_lines.insert(8, time_line)
 
                     # Get the current line to display
