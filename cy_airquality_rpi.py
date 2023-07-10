@@ -4,6 +4,7 @@ import time
 import Adafruit_CharLCD as LCD
 from unidecode import unidecode
 from datetime import datetime
+import re
 
 import logging
 from logging.handlers import RotatingFileHandler
@@ -58,7 +59,17 @@ while True:
                 # Find all pollutant labels and values within the div along with last update time
                 pollutant_labels = div_element.find_all(class_="pollutant-label")
                 pollutant_values = div_element.find_all(class_="pollutant-value")
-                last_updated = div_element.find_all(class_="views-field views-field-field-station-update-time")
+
+                # Find the element containing the text starting with "Updated on: "
+                regex_pattern = re.compile(r"^Updated on: (\d{2}/\d{2}/\d{4} \d{2}:\d{2})")
+                element = soup.find(text=regex_pattern)
+
+                    if element:
+                    # Extract the time from the text
+                        match = regex_pattern.match(element)
+                        if match:
+                        updated_time = match.group(1)
+
 
                 index = 0
                 while True:
@@ -77,7 +88,7 @@ while True:
                         pollutant_lines.append(line)
 
                     # Add the timestamp
-                    time_line = f"{last_updated}"
+                    time_line = f"{updated_time}"
                     pollutant_lines.insert(8, time_line)
 
                     # Get the current line to display
@@ -125,4 +136,4 @@ while True:
         logging.error("Error fetching data")
 
     # Update every 10 minutes
-    time.sleep(600)
+    time.sleep(60)
