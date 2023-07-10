@@ -136,4 +136,4 @@ while True:
         logging.error("Error fetching data")
 
     # Update every 10 minutes
-    time.sleep(60)
+    time.sleep(600)
