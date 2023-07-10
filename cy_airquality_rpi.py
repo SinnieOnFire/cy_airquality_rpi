@@ -64,10 +64,10 @@ while True:
                 regex_pattern = re.compile(r"^Updated on: (\d{2}/\d{2}/\d{4} \d{2}:\d{2})")
                 element = soup.find(text=regex_pattern)
 
-                    if element:
-                    # Extract the time from the text
-                        match = regex_pattern.match(element)
-                        if match:
+                if element:
+                # Extract the time from the text
+                    match = regex_pattern.match(element)
+                    if match:
                         updated_time = match.group(1)
 
 
@@ -88,7 +88,7 @@ while True:
                         pollutant_lines.append(line)
 
                     # Add the timestamp
-                    time_line = f"{updated_time}"
+                    time_line = f"Last Updated:\n{updated_time}"
                     pollutant_lines.insert(8, time_line)
 
                     # Get the current line to display
