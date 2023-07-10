@@ -55,15 +55,16 @@ while True:
                 # Get the station city
                 station_name = h4_header.text.strip()
 
-                # Find all pollutant labels and values within the div
+                # Find all pollutant labels and values within the div along with last update time
                 pollutant_labels = div_element.find_all(class_="pollutant-label")
                 pollutant_values = div_element.find_all(class_="pollutant-value")
+                last_updated = div_element.find_all(class_="views-field views-field-field-station-update-time")
 
                 index = 0
                 while True:
                     # Refresh time
-                    now = datetime.now()
-                    current_time = now.strftime('%d.%m.%Y %H:%M:%S')
+                    # now = datetime.now()
+                    # current_time = now.strftime('%d.%m.%Y %H:%M:%S')
 
                     # Create a list of formatted pollutant lines
                     pollutant_lines = []
@@ -76,7 +77,7 @@ while True:
                         pollutant_lines.append(line)
 
                     # Add the timestamp
-                    time_line = f"Last Updated:\n{current_time}"
+                    time_line = f"{last_updated}"
                     pollutant_lines.insert(8, time_line)
 
                     # Get the current line to display
