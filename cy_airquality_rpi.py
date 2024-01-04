@@ -49,7 +49,7 @@ while True:
     # Check for internet connectivity
     while True:
         try:
-            requests.get("https://www.google.com", timeout=1)
+            requests.get("https://www.google.com", timeout=5)
             break
         except requests.ConnectionError:
             print("No internet connection. Retrying in 30 minutes…")
