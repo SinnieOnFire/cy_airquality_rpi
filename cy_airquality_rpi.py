@@ -39,9 +39,22 @@ lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_c
 # Display loop duration
 duration = 599
 
+# Internet connection check interval
+check_interval = 1800
+
 while True:
     # Starts counting for duration
     start_time = time.time()
+
+    # Check for internet connectivity
+    while True:
+        try:
+            requests.get("http://www.google.com", timeout=1)
+            break
+        except requests.ConnectionError:
+            print("No internet connection. Retrying in 30 minutes…")
+            logging.error("No internet connection. Retrying in 30 minutes…")
+            time.sleep(check_interval)
 
     # Send a GET request to the webpage
     url = "https://www.airquality.dli.mlsi.gov.cy/"
