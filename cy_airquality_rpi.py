@@ -36,7 +36,13 @@ lcd_rows = 2
 
 lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
 
+# Display loop duration
+duration = 599
+
 while True:
+    # Starts counting for duration
+    start_time = time.time()
+
     # Send a GET request to the webpage
     url = "https://www.airquality.dli.mlsi.gov.cy/"
     response = requests.get(url)
@@ -70,13 +76,9 @@ while True:
                     if match:
                         updated_time = match.group(1)
 
-
+                # Display loop
                 index = 0
-                while True:
-                    # Refresh time
-                    # now = datetime.now()
-                    # current_time = now.strftime('%d.%m.%Y %H:%M:%S')
-
+                while time.time() - start_time < duration:
                     # Create a list of formatted pollutant lines
                     pollutant_lines = []
                     for label, value in zip(pollutant_labels, pollutant_values):
@@ -126,14 +128,16 @@ while True:
             else:
                 print("Could not find table for Limassol, webpage updated or unavailable")
                 logging.error("Could not find table for Limassol, webpage updated or unavailable")
+                time.sleep(59)
         else:
             print("Could not find the table, webpage updated or unavailable")
             logging.error("Could not find the table, webpage updated or unavailable")
+            time.sleep(59)
 
     else:
         lcd.clear()
         lcd.message("Error fetching data")
         logging.error("Error fetching data")
-
-    # Update every 10 minutes
-    time.sleep(600)
+        time.sleep(59)
+    
+    time.sleep(1)
