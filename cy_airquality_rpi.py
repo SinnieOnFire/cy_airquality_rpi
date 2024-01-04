@@ -40,7 +40,7 @@ lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_c
 duration = 599
 
 # Internet connection check interval
-check_interval = 1800
+check_interval = 60
 
 while True:
     # Starts counting for duration
@@ -49,7 +49,7 @@ while True:
     # Check for internet connectivity
     while True:
         try:
-            requests.get("https://www.google.com", timeout=1)
+            requests.get("https://www.google.com", timeout=5)
             break
         except requests.ConnectionError:
             print("No internet connection. Retrying in 30 minutes…")
