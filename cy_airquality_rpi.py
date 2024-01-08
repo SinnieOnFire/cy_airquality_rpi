@@ -108,13 +108,16 @@ while True:
                     if color_classes:
                         pollution_color = color_classes[0]['class'][1]  # Get the color from the class attribute
 
-                    # Check if the pollution color is not green
-                    if pollution_color != 'green':
-                        # Turn on the red LED
-                        GPIO.output(red_pin, GPIO.HIGH)
-                    else:
-                        # Turn off the red LED
-                        GPIO.output(red_pin, GPIO.LOW)
+                        # Print the pollution color for debugging
+                        print(f'Pollution Color: {pollution_color}')
+
+                        # Check if the pollution color is not green
+                        if pollution_color != 'station-status-green':
+                            # Turn on the red LED
+                            GPIO.output(red_pin, GPIO.HIGH)
+                        else:
+                            # Turn off the red LED
+                            GPIO.output(red_pin, GPIO.LOW)
 
                 # Display loop
                 index = 0
