@@ -5,6 +5,7 @@ import Adafruit_CharLCD as LCD
 from unidecode import unidecode
 from datetime import datetime
 import re
+import RPi.GPIO as GPIO
 
 import logging
 from logging.handlers import RotatingFileHandler
@@ -35,6 +36,13 @@ lcd_columns = 16
 lcd_rows = 2
 
 lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
+
+# RGB LED configuration
+rgb_pin = 19    # GPIO pin for common anode RGB LED
+GPIO.setmode(GPIO.BCM)
+GPIO.setup(rgb_pin, GPIO.OUT)
+rgb_led = GPIO.PWM(rgb_pin, 100)
+rgb_led.start(0)  # Start with LED turned off
 
 # Display loop duration
 duration = 599
@@ -88,6 +96,19 @@ while True:
                     match = regex_pattern.match(element)
                     if match:
                         updated_time = match.group(1)
+
+                # Find the element with the color indicator
+                color_indicator = div_element.find("div", class_="group-status-helper-wrapper")
+                if color_indicator:
+                    color_classes = color_indicator.find_all(class_=re.compile("station-status-(green|yellow|orange|red)"))
+                    if color_classes:
+                        pollution_color = color_classes[0]['class'][1]  # Get the color from the class attribute
+
+                        # Map pollution colors to PWM values
+                        pwm_values = {'green': 0, 'yellow': 33, 'orange': 66, 'red': 100}
+
+                        # Set RGB LED to the corresponding color
+                        rgb_led.ChangeDutyCycle(pwm_values[pollution_color])
 
                 # Display loop
                 index = 0
