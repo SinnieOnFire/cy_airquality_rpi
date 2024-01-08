@@ -3,10 +3,8 @@ from bs4 import BeautifulSoup
 import time
 import Adafruit_CharLCD as LCD
 from unidecode import unidecode
-from datetime import datetime
-import re
 import RPi.GPIO as GPIO
-
+import re
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -38,11 +36,15 @@ lcd_rows = 2
 lcd = LCD.Adafruit_CharLCD(lcd_rs, lcd_en, lcd_d4, lcd_d5, lcd_d6, lcd_d7, lcd_columns, lcd_rows, lcd_backlight)
 
 # RGB LED configuration
-rgb_pin = 19    # GPIO pin for common anode RGB LED
+red_pin = 19    # GPIO pin for red color
+green_pin = 20  # GPIO pin for green color
+blue_pin = 21   # GPIO pin for blue color
+
+# Set up GPIO
 GPIO.setmode(GPIO.BCM)
-GPIO.setup(rgb_pin, GPIO.OUT)
-rgb_led = GPIO.PWM(rgb_pin, 100)
-rgb_led.start(0)  # Start with LED turned off
+GPIO.setup(red_pin, GPIO.OUT)
+GPIO.setup(green_pin, GPIO.OUT)
+GPIO.setup(blue_pin, GPIO.OUT)
 
 # Display loop duration
 duration = 599
@@ -92,7 +94,7 @@ while True:
                 element = soup.find(text=regex_pattern)
 
                 if element:
-                # Extract the time from the text
+                    # Extract the time from the text
                     match = regex_pattern.match(element)
                     if match:
                         updated_time = match.group(1)
@@ -104,11 +106,16 @@ while True:
                     if color_classes:
                         pollution_color = color_classes[0]['class'][1]  # Get the color from the class attribute
 
-                        # Map pollution colors to PWM values
-                        pwm_values = {'green': 0, 'yellow': 33, 'orange': 66, 'red': 100}
+                        # Map pollution colors to GPIO states
+                        color_states = {'green': (GPIO.LOW, GPIO.HIGH, GPIO.HIGH),
+                                        'yellow': (GPIO.HIGH, GPIO.HIGH, GPIO.LOW),
+                                        'orange': (GPIO.HIGH, GPIO.LOW, GPIO.HIGH),
+                                        'red': (GPIO.HIGH, GPIO.HIGH, GPIO.HIGH)}
 
-                        # Set RGB LED to the corresponding color
-                        rgb_led.ChangeDutyCycle(pwm_values[pollution_color])
+                        # Set GPIO pins to the corresponding color state
+                        GPIO.output(red_pin, color_states[pollution_color][0])
+                        GPIO.output(green_pin, color_states[pollution_color][1])
+                        GPIO.output(blue_pin, color_states[pollution_color][2])
 
                 # Display loop
                 index = 0
@@ -173,5 +180,5 @@ while True:
         lcd.message("Error fetching data")
         logging.error("Error fetching data")
         time.sleep(59)
-    
+
     time.sleep(1)
