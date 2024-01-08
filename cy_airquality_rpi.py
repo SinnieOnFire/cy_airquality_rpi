@@ -3,8 +3,10 @@ from bs4 import BeautifulSoup
 import time
 import Adafruit_CharLCD as LCD
 from unidecode import unidecode
-import RPi.GPIO as GPIO
+from datetime import datetime
 import re
+import RPi.GPIO as GPIO
+
 import logging
 from logging.handlers import RotatingFileHandler
 
@@ -94,7 +96,7 @@ while True:
                 element = soup.find(text=regex_pattern)
 
                 if element:
-                    # Extract the time from the text
+                # Extract the time from the text
                     match = regex_pattern.match(element)
                     if match:
                         updated_time = match.group(1)
@@ -180,5 +182,5 @@ while True:
         lcd.message("Error fetching data")
         logging.error("Error fetching data")
         time.sleep(59)
-
+    
     time.sleep(1)
