@@ -101,23 +101,17 @@ while True:
                     if match:
                         updated_time = match.group(1)
 
-                # Find the element with the color indicator
-                color_indicator = div_element.find("div", class_="group-status-helper-wrapper")
-                if color_indicator:
-                    color_classes = color_indicator.find_all(class_=re.compile("station-status-(green|yellow|orange|red)"))
-                    if color_classes:
-                        pollution_color = color_classes[0]['class'][1]  # Get the color from the class attribute
+                if div_element:
+                    # Find the element with the class "station-status-green"
+                    station_status_green = div_element.find("span", class_="station-status-green")
 
-                        # Print the pollution color for debugging
-                        print(f'Pollution Color: {pollution_color}')
-
-                        # Check if the pollution color is not green
-                        if pollution_color != 'station-status-green':
-                            # Turn on the red LED
-                            GPIO.output(red_pin, GPIO.HIGH)
-                        else:
-                            # Turn off the red LED
-                            GPIO.output(red_pin, GPIO.LOW)
+                    # Check if the pollution color is not green
+                    if station_status_green:
+                        # Turn on the red LED
+                        GPIO.output(red_pin, GPIO.LOW)
+                    else:
+                        # Turn off the red LED
+                        GPIO.output(red_pin, GPIO.HIGH)
 
                 # Display loop
                 index = 0
